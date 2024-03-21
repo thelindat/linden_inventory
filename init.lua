@@ -36,32 +36,50 @@ do
 end
 
 if IsDuplicityVersion() then
+    -- Try and get convars for random loot
+    -- Note: randomloot will be overriden by randomdumpsterloot / randomvehicleloot if present
+    local randomLootConvar = GetConvarInt('inventory:randomloot', 1)
+    local randomDumpsterLootConvar = GetConvarInt('inventory:randomdumpsterloot', -1)
+    local randomVehicleLootConvar = GetConvarInt('inventory:randomvehicleloot', -1)
+
+    -- Check if default value was received from the new convars
+    --    If default: check for backwards compatible randomloot convar
+    --    Else: check for specific enabling / disabling
+    local useRandomDumpsterLoot = randomDumpsterLootConvar == -1
+        and randomLootConvar == 1
+        or randomDumpsterLootConvar == 1
+
+    local useRandomVehicleLoot = randomVehicleLootConvar == -1
+        and randomLootConvar == 1
+        or randomVehicleLootConvar == 1
+
     server = {
         bulkstashsave = GetConvarInt('inventory:bulkstashsave', 1) == 1,
         loglevel = GetConvarInt('inventory:loglevel', 1),
         randomprices = GetConvarInt('inventory:randomprices', 0) == 1,
-        randomloot = GetConvarInt('inventory:randomloot', 1) == 1,
+        randomdumpsterloot = useRandomDumpsterLoot,
+        randomvehicleloot = useRandomVehicleLoot,
         evidencegrade = GetConvarInt('inventory:evidencegrade', 2),
         trimplate = GetConvarInt('inventory:trimplate', 1) == 1,
         vehicleloot = json.decode(GetConvar('inventory:vehicleloot', [[
-			[
-				["cola", 1, 1],
-				["water", 1, 1],
-				["garbage", 1, 2, 50],
-				["panties", 1, 1, 5],
-				["money", 1, 50],
-				["money", 200, 400, 5],
-				["bandage", 1, 1]
-			]
-		]])),
+            [
+                ["cola", 1, 1],
+                ["water", 1, 1],
+                ["garbage", 1, 2, 50],
+                ["panties", 1, 1, 5],
+                ["money", 1, 50],
+                ["money", 200, 400, 5],
+                ["bandage", 1, 1]
+            ]
+        ]])),
         dumpsterloot = json.decode(GetConvar('inventory:dumpsterloot', [[
-			[
-				["mustard", 1, 1],
-				["garbage", 1, 3],
-				["money", 1, 10],
-				["burger", 1, 1]
-			]
-		]])),
+            [
+                ["mustard", 1, 1],
+                ["garbage", 1, 3],
+                ["money", 1, 10],
+                ["burger", 1, 1]
+            ]
+        ]])),
     }
 
     local accounts = json.decode(GetConvar('inventory:accounts', '["money"]'))
