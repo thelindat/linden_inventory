@@ -94,6 +94,10 @@ local function createCraftingBench(id, data)
 	end
 end
 
-for id, data in pairs(lib.load('data.crafting')) do createCraftingBench(id, data) end
+RegisterNetEvent('ox_inventory:registerCraftingBench', function(id, data)
+    createCraftingBench(id, data)
+end)
+
+lib.callback('ox_inventory:getCraftingBenches', false, function(data) for id, data in pairs(data) do createCraftingBench(id, data) end end)
 
 return CraftingBenches
